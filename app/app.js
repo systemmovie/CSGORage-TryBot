@@ -59,11 +59,12 @@ if (shouldQuit) {
 io.on('connection', (socket) => {
 
 	socket.on('csgorage-trybot cloudflare alwaysonline', (payload) => {
-		setTimeout(() => {
+		let cloudFlareTimeOut = setTimeout(() => {
 			if (mainWindow) {
 				mainWindow.loadURL('http://csgorage.com/free-raffles/current');
 			}
 		}, 5 * 60 * 1000);
+		cloudFlareTimeOut.unref();
 	});
 
 	socket.on('csgorage-trybot cloudflare captcha', (payload) => {
@@ -148,13 +149,13 @@ App.on('ready', () => {
 	configWindow.loadURL(__dirname + "/config.html");
 
 	configWindow.webContents.on('dom-ready', () => {
-		var socket_src_code = fs.readFile(__dirname + '/socket.io.min.js', 'utf8', (err, data) => {
+		let socket_src_code = fs.readFile(__dirname + '/socket.io.min.js', 'utf8', (err, data) => {
     		configWindow.webContents.executeJavaScript(data);
 
-    		var code_global = 'window.show_window = ' + CONFIGS.show_window + ';window.update_time = ' + CONFIGS.update_time + ';';
+    		let code_global = 'window.show_window = ' + CONFIGS.show_window + ';window.update_time = ' + CONFIGS.update_time + ';';
     		configWindow.webContents.executeJavaScript(code_global);
 
-    		var socket_code = 'var socket = io.connect("http://localhost:3331");';
+    		let socket_code = 'var socket = io.connect("http://localhost:3331");';
         	configWindow.webContents.executeJavaScript(socket_code);
     	});
 	});
@@ -175,10 +176,10 @@ App.on('ready', () => {
 
 	mainWindow.webContents.on('dom-ready', () => {
 
-		var socket_src_code = fs.readFile(__dirname + '/socket.io.min.js', 'utf8', (err, data) => {
+		let socket_src_code = fs.readFile(__dirname + '/socket.io.min.js', 'utf8', (err, data) => {
 			mainWindow.webContents.executeJavaScript(data);
 
-			var raffle_src_code = fs.readFile(__dirname + '/raffle.js', 'utf8', (err, data) => {
+			let raffle_src_code = fs.readFile(__dirname + '/raffle.js', 'utf8', (err, data) => {
 		   		mainWindow.webContents.executeJavaScript(data);
 			});
 		});
@@ -190,6 +191,7 @@ App.on('ready', () => {
   			mainWindow.loadURL('http://csgorage.com/free-raffles/current');
   		}
 	}, CONFIGS.update_time * 60 * 1000); // minutes to milliseconds
+	updateInterval.unref();
 
 
 	updateTryInfo();
@@ -229,9 +231,15 @@ function updateTryInfo() {
 
 	template.push({
 		icon: __dirname + '/exit.png',
-		label: labels['Close'],
+		label: labels['close'],
 		click: () => {
+			mainWindow.close();
+			configWindow.close();
 			App.quit();
+			
+			setTimeout(() => {
+				App.exit(0);
+			}, 400);
 		}
 	});
 
