@@ -1,10 +1,19 @@
 {
-  "name"    : "CSGORage - BOT",
+  "name"    : "CSGORage - TryBot",
   "version" : "0.1.0",
   "main"    : "app.js",
   "dependencies": {
   	"socket.io": "^1.4.5",
   	"jquery": "^2.2.2",
   	"electron-json-storage": "^2.0.0"
+  },
+  "author": {
+    "name": "Pedro Henrique",
+    "email": "system.pedrohenrique@gmail.com",
+    "url": "http://pedrohenrique.ninja"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/systemmovie/CSGORage-TryBot.git"
   }
 }
